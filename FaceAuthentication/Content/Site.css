@@ -1,0 +1,302 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+
+
+
+/*==============CUSTOMIZE CSS============*/
+:root {
+    --color-highlight: #058DC2;
+    --color-main: #009666;
+    --color-text: #00172E;
+    --color-black: #252525;
+    --white: #fff;
+    --black: #000;
+    --light: #F4F5F6;
+    --color-bg: #fff;
+}
+
+
+body {
+    font-family: sans-serif;
+    margin: 0;
+    box-sizing: border-box;
+    position:relative;
+}
+
+.btn {
+    padding: .5em 1em !important;
+    border: none !important;
+    border-radius: .25em !important;
+    font-weight: 400 !important;
+}
+
+.btn-ui {
+    background-color: var(--color-main) !important;
+    color: white !important;
+}
+
+.btn-ui:hover {
+    background-color: #067855 !important;
+    color: white !important;
+    border-color:unset !important;
+}
+
+.btn-camera svg {
+    width: 28px;
+    height: 28px
+}
+
+
+
+#camera {
+    border-radius: 1.25em;
+    width: 100%;
+    animation-duration: .5s;
+}
+
+#overlayText {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 4;
+    pointer-events: none; /* Allow clicks to pass through the overlay */
+    top: 0;
+    left: 0;
+    opacity: 0; /* Initially hidden */
+    animation: fadeInOut 3s infinite;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; }
+    25% { opacity: 1; }
+    75% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+#instruction-text {
+    position: absolute;
+    color: #fff;
+    font-size: 18px;
+    top: 94%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: max-content;
+    background-color: #88888899;
+    padding: 0.25em 0.5em;
+    border-radius: 0.25em;
+}
+
+
+svg {
+    border-radius: 1em;
+}
+
+#svg-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+}
+
+.circle {
+    rotate: -88deg;
+    transform-origin: center center;
+    transition: all 0.25s linear 0s;
+    transition: stroke-dashoffset 0.25s ease-in-out; /* Optional: Add a smooth transition effect */
+}
+
+.camera-wrap canvas {
+    position: absolute;
+    z-index: 100;
+}
+
+#imageUpload {
+    position: absolute;
+    z-index: 200;
+    border-radius: 1em;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+
+
+.entry-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 9999;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid var(--color-main);
+    border-top: 4px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+
+
+.modal-header svg {
+    width: 2em;
+    height: 1.5em;
+    transform: translateY(-5px);
+    margin-right: .25em;
+}
+
+.modal-header .modal-title span{
+    font-size:1.25em;
+    line-height:1.25em;
+}
+
+
+
+/*=============== PC ===============*/
+.faceCheck-container {
+    background-color: var( --color-bg);
+    width: 100%;
+    height: 100vh;
+}
+
+.actionBtn-wrap .btn{
+    width:100%;
+}
+
+.actionBtn-wrap svg{
+    width: 35px;
+    height: 20px;
+}
+.actionBtn-wrap span{
+    line-height:20px;
+}
+
+
+.camera-wrap {
+    position: relative;
+    width: 640px;
+}
+
+.btnSwapCam {
+    position: absolute;
+    top: 84%;
+    right: 10px;
+    border-radius: 50%;
+    color: white;
+    outline: 2px solid white !important;
+    padding: .825em;
+    font-weight: bold;
+    background-color: rgba(204,204,204,83);
+    z-index: 5;
+}
+
+.btnSwapCam:hover {
+    color: white;
+    outline: 2px solid white !important;
+    background-color: rgba(204,204,204,83);
+    opacity: .8;
+}
+
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.result-div{
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 120px 120px;
+    color: var(--color-main);
+    position: absolute;
+    top: 60px;
+    left: 200px;
+    margin: 0px;
+    font-size: 1.5em;
+    border-radius: 200px;
+    
+}
+.result-item{
+    position: absolute;
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.result-item{
+    
+}
+.result-div .show {
+    display: block;
+    animation: fadeIn 0.5s ease-in-out forwards;
+}
+.result-div svg{
+    margin-right: 10px;
+    width: 32px;
+    height: 32px;
+}
+
+
+.show.visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+#imageUpload {
+    max-height: 360px;
+}
+
