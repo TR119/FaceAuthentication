@@ -15,10 +15,9 @@ namespace FaceAuthentication.Controllers
     {
         public ActionResult Index()
         {
+            ViewBag.IsMobile = Request.Browser.IsMobileDevice ? true : false;
             return View();
         }
-
-
 
         public ActionResult About()
         {
@@ -32,14 +31,14 @@ namespace FaceAuthentication.Controllers
                  return Json(new { isError = true });
              var contentRootPath = Server.MapPath("~/");
              var uploadsFolder = Path.Combine(contentRootPath, "Storage", "FaceData", "Temp");
-             var fileName = Guid.NewGuid().ToString() + Path.GetFileName(FaceImage.FileName) ;
+             var fileName = Guid.NewGuid().ToString() + Path.GetFileName(FaceImage.FileName)+".png" ;
              var filePath = Path.Combine(uploadsFolder, fileName);
              string directoryPath = Path.GetDirectoryName(filePath);
 
              if (!Directory.Exists(directoryPath))
              {
                  Directory.CreateDirectory(directoryPath);
-             }
+             }                       
              FaceImage.SaveAs(filePath);
              var isAllowed = CompareFace(filePath);
              if (isAllowed)
@@ -104,13 +103,12 @@ namespace FaceAuthentication.Controllers
 
                  return false;
              }
-             catch (Exception e)
+              catch (Exception e)
              {
                  return false;
              }
             
          }
-
        
     }
 }
