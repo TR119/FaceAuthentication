@@ -1,13 +1,14 @@
 ﻿(function ($) {
     $.fn.facerecognize = function (options) {
-        // Default options
-        var settings = $.extend({
+        let settings = $.extend({
             isMobile: false,
             apiFaceCheck: '/Home/FaceCheck/',
+            backgroundRect: 'rgba(255, 255, 255, 0.95)',
+            isLiveness: false,
         }, options);
 
         this.each(function () {
-            var $element = $(this);
+            let $element = $(this);
             if (!settings.isMobile) {
                 $element.append(pcElement);
             }
@@ -17,20 +18,20 @@
 
         const apiCheckFace = settings.apiFaceCheck;
         let deviceWidth = $(window).width();
-        let action = 0;
+        let action = settings.isLiveness? 0 : 5;
         let actionArray = [1, 2, 3, 4].sort(() => Math.random() - 0.5);
         let indexActionArray = 0;
         let centerX, noseTip, facemesh, interval;
         let valueCircle = 800;
         const isMobile = settings.isMobile;
-        let cameras = [];
-        let currentCamera, currentStream, currentConstrains, facingMode, canvas;
+        let currentStream, currentConstrains, facingMode, canvas;
         const video = $('#camera')[0]
+        $('#backgroundRect').attr('fill', settings.backgroundRect);
+        showOverlayText();
 
         $(document).ready(
+
             async function () {
-                isMobile = $("#IsMobile").val() == 1 ? true : false;
-                await findBestCamera(1);
                 await startCamera()
                 async function loadFaceMesh() {
                     if (!facemesh) {
@@ -39,9 +40,6 @@
                         });
                     }
                 }
-
-                if ((!isMobile && cameras.length > 1) || isMobile)
-                    $(".btnSwapCam").removeClass("d-none");
                 await loadFaceMesh();
                 startLiveness();
             },
@@ -83,75 +81,6 @@
             } catch (error) {
                 alert("Lỗi khi truy cập camera");
             }
-        }
-        async function findBestCamera(type) {
-            /* try {
-                 navigator.mediaDevices.getUserMedia({
-                     video: true,
-                     audio: false,
-                 });
-                 const devices = await navigator.mediaDevices.enumerateDevices();
-                 cameras = devices.filter(device => device.kind === 'videoinput');
-                 if (cameras.length === 0) {
-                    alert("Không tìm thấy camera");
-                    return;
-                 }
-                 currentCamera = cameras.filter(camera => camera.label.includes('facing front'))[0] || cameras[0];
-                 if (type === 1) {
-                     facingMode = "user";
-                     $(".camera-wrap").css('height', "70vh");
-                 }
-                 if (isMobile) {
-                     currentConstrains = {
-                         audio: false,
-                         video: {
-                             facingMode: facingMode,
-                         }
-                     }
-                 }
-                 else {
-                     currentConstrains = {
-                         audio: false,
-                         video: {
-                             deviceId: { exact: currentCamera.deviceId },
-                             width: 640,
-                             height: 360,
-                         }
-                     }
-                 }
-             }
-             catch (error) {
-                alert("Không tìm thấy camera");
-             }*/
-
-        }
-        async function handleChangeCamera(parameter) {
-            $("#camera").removeClass("animate__fadeOut");
-            $(".svg-cardFrame").addClass('d-none');
-            $("#camera")[0].offsetWidth;
-
-            setTimeout(function () {
-                $("#camera").addClass("animate__fadeOut");
-            }, 100);
-
-            if (!isMobile) {
-                const currentIndex = cameras.indexOf(currentCamera);
-                if (currentIndex === -1) {
-                    return null;
-                }
-                const nextIndex = (currentIndex + 1) % cameras.length;
-                currentCamera = cameras[nextIndex];
-                currentConstrains.video.deviceId = { exact: currentCamera.deviceId };
-            }
-            else {
-                if (parameter) {
-                    currentConstrains.video.facingMode = 'user'
-                }
-                else
-                    currentConstrains.video.facingMode = currentConstrains.video.facingMode === 'user' ? 'environment' : 'user';
-            }
-            await startCamera();
-
         }
         function startLiveness() {
             interval = setInterval(async function () {
@@ -235,7 +164,7 @@
                                     requestSent = true;
                                     const formData = new FormData();
                                     formData.append('FaceImage', blob);
-                                    var response = await fetch('/Home/FaceCheck/',
+                                    var response = await fetch(apiCheckFace ,
                                         {
                                             method: 'POST',
                                             credentials: 'include',
@@ -255,9 +184,6 @@
                                 }, 'image/png', 1);
 
                             }, 2000);
-
-
-                            getNextAction(actionArray);
                             break;
                         default:
                             break;
@@ -296,34 +222,39 @@
             });
         }
         function showOverlayText(instruction) {
+            const showTextWithDelay = (text, delay) => {
+                setTimeout(() => {
+                    $('#instruction-text').text(text);
+                    $('#overlayText').fadeIn();
+                }, delay);
+            };
+
             if (instruction) {
                 $('#instruction-text').text(instruction);
-            }
-            else {
+                $('#overlayText').fadeIn();
+            } else {
                 switch (action) {
                     case 1:
-                        instruction = "Quay trái"
+                        showTextWithDelay("Quay trái", 1000);
                         break;
                     case 2:
-                        instruction = "Quay phải";
+                        showTextWithDelay("Quay phải", 1000);
                         break;
                     case 3:
-                        instruction = "Quay xuống dưới";
+                        showTextWithDelay("Quay xuống dưới", 1000);
                         break;
                     case 4:
-                        instruction = "Quay lên trên";
+                        showTextWithDelay("Quay lên trên", 1000);
                         break;
                     case 5:
-                        instruction = "Giữ nguyên khuôn mặt";
+                        showTextWithDelay("Giữ nguyên khuôn mặt", 1000);
                         break;
                     default:
                         break;
                 }
-                $('#instruction-text').text(instruction);
-                $('#overlayText').fadeIn();
             }
-
         }
+
         function hideOverlay() {
             $('#overlayText').fadeOut();
         }
@@ -362,7 +293,7 @@
             }
         }
         function reset() {
-            action = 0;
+            action = setting.isLiveness ? 0 : 5;
             actionArray = [1, 2, 3, 4].sort(() => Math.random() - 0.5);
 
             valueCircle = 800;
@@ -376,28 +307,11 @@
             }, 2000)
 
         }
-
-        // Maintain chainability
         return this;
     };
-
-
-
 })(jQuery);
 
-
-
-
-;
-
-
-
-
-
-
-
 let pcElement = `<div id="container-pc">
-                <input type="hidden" id="IsMobile" value="0" />
                 <div class="d-flex justify-content-center align-items-center faceCheck-container">
                     <div style="min-height:416px;">
                         <div class="camera-wrap">
@@ -433,7 +347,7 @@ let pcElement = `<div id="container-pc">
                                             <rect x="0" y="0" width="640" height="360" fill="#fff" />
                                         </mask>
                                     </defs>
-                                    <rect mask="url(#bgClip)" x="0" y="0" width="640" height="360" fill="rgb(0,0,0,0.8)" />
+                                    <rect id="backgroundRect" mask="url(#bgClip)" x="0" y="0" width="640" height="360" fill="rgb(0,0,0,0.8)" />
                                     <defs>
                                         <mask id="targetSectorMask" x="0" y="0">
                                             <circle stroke-width="62.5" r="125" cx="320" cy="180" fill="" stroke="white" />
@@ -454,7 +368,6 @@ let pcElement = `<div id="container-pc">
 
             </div>`
 let mobileElement = ` <div id="container-mobile">
-                <input type="hidden" id="IsMobile" value="1" />
                 <div class="d-flex justify-content-center " style="width:100%;">
                     <div style="width: 100%; ">
                         <div class="camera-wrap">
@@ -487,7 +400,7 @@ let mobileElement = ` <div id="container-mobile">
                                             <rect x="0" y="0" width="400" height="542" fill="#fff" />
                                         </mask>
                                     </defs>
-                                    <rect mask="url(#bgClip)" x="0" y="0" width="400" height="542" fill="rgba(255,255,255,1)" />
+                                    <rect id="backgroundRect" mask="url(#bgClip)" x="0" y="0" width="400" height="542" fill="rgba(255,255,255,1)" />
                                     <defs>
                                         <mask id="targetSectorMask" x="0" y="0">
                                             <circle stroke-width="62.5" r="125" cx="200" cy="271" fill="" stroke="white" />
